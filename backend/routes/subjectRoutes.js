@@ -1,4 +1,5 @@
 
+
 const express = require("express");
 const router = express.Router();
 
@@ -13,16 +14,16 @@ const {
 // GET all subjects
 router.get("/", getAllSubjects);
 
-// GET a subject by ID
+// GET subject by ID
 router.get("/:id", getSubjectById);
 
-// CREATE a subject
+// CREATE subject
 router.post("/", createSubject);
 
-// UPDATE a subject
+// UPDATE subject
 router.put("/:id", updateSubject);
 
-// DELETE a subject
+// DELETE subject
 router.delete("/:id", deleteSubject);
 
 module.exports = router;

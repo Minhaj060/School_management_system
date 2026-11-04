@@ -1,43 +1,14 @@
 
+
 const subjectModel = require("../models/subjectModel");
+
+const SubjectFactory = require("../utils/subjectFactory");
+
+const { validateSubject } = require("../utils/subjectValidation");
 
 // Validate subject ID
 const isValidId = (id) => {
     return /^\d+$/.test(String(id)) && Number(id) > 0;
-};
-
-// Validate subject data
-const validateSubject = (body) => {
-    const { subject_name, subject_code, class_id } = body;
-
-    if (
-        typeof subject_name !== "string" ||
-        subject_name.trim() === ""
-    ) {
-        return "Subject name is required.";
-    }
-
-    if (subject_name.trim().length > 100) {
-        return "Subject name cannot exceed 100 characters.";
-    }
-
-    if (subject_code != null && subject_code !== "") {
-        if (typeof subject_code !== "string") {
-            return "Subject code must be a string.";
-        }
-
-        if (subject_code.trim().length > 30) {
-            return "Subject code cannot exceed 30 characters.";
-        }
-    }
-
-    if (class_id !== undefined && class_id !== null && class_id !== "") {
-        if (!Number.isInteger(Number(class_id)) || Number(class_id) <= 0) {
-            return "Class ID must be a positive integer.";
-        }
-    }
-
-    return null;
 };
 
 // Handle database errors
@@ -51,13 +22,17 @@ const handleDatabaseError = (res, error, action) => {
         });
     }
 
-    if (
-        error.code === "ER_NO_REFERENCED_ROW_2" ||
-        error.code === "ER_ROW_IS_REFERENCED_2"
-    ) {
+    if (error.code === "ER_NO_REFERENCED_ROW_2") {
         return res.status(400).json({
             success: false,
-            message: "Invalid class ID or the subject is being used by another record."
+            message: "Invalid class ID."
+        });
+    }
+
+    if (error.code === "ER_ROW_IS_REFERENCED_2") {
+        return res.status(409).json({
+            success: false,
+            message: "This subject is being used by another record."
         });
     }
 
@@ -77,12 +52,13 @@ const getAllSubjects = async (req, res) => {
             count: subjects.length,
             data: subjects
         });
+
     } catch (error) {
         return handleDatabaseError(res, error, "Get Subjects");
     }
 };
 
-// Get a subject by ID
+// Get subject by ID
 const getSubjectById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -107,6 +83,7 @@ const getSubjectById = async (req, res) => {
             success: true,
             data: subject
         });
+
     } catch (error) {
         return handleDatabaseError(res, error, "Get Subject");
     }
@@ -115,6 +92,7 @@ const getSubjectById = async (req, res) => {
 // Create a new subject
 const createSubject = async (req, res) => {
     try {
+        // Strategy Pattern: Validate subject data
         const validationError = validateSubject(req.body);
 
         if (validationError) {
@@ -124,22 +102,11 @@ const createSubject = async (req, res) => {
             });
         }
 
-        const subjectData = {
-            subject_name: req.body.subject_name.trim(),
-            subject_code:
-                typeof req.body.subject_code === "string" &&
-                req.body.subject_code.trim() !== ""
-                    ? req.body.subject_code.trim()
-                    : null,
-            class_id:
-                req.body.class_id === undefined ||
-                req.body.class_id === null ||
-                req.body.class_id === ""
-                    ? null
-                    : Number(req.body.class_id)
-        };
+        // Factory Pattern: Create subject object
+        const subjectData = SubjectFactory.createSubject(req.body);
 
         const subjectId = await subjectModel.createSubject(subjectData);
+
         const subject = await subjectModel.getSubjectById(subjectId);
 
         return res.status(201).json({
@@ -147,6 +114,7 @@ const createSubject = async (req, res) => {
             message: "Subject created successfully.",
             data: subject
         });
+
     } catch (error) {
         return handleDatabaseError(res, error, "Create Subject");
     }
@@ -173,6 +141,7 @@ const updateSubject = async (req, res) => {
             });
         }
 
+        // Strategy Pattern: Validate subject data
         const validationError = validateSubject(req.body);
 
         if (validationError) {
@@ -182,22 +151,11 @@ const updateSubject = async (req, res) => {
             });
         }
 
-        const subjectData = {
-            subject_name: req.body.subject_name.trim(),
-            subject_code:
-                typeof req.body.subject_code === "string" &&
-                req.body.subject_code.trim() !== ""
-                    ? req.body.subject_code.trim()
-                    : null,
-            class_id:
-                req.body.class_id === undefined ||
-                req.body.class_id === null ||
-                req.body.class_id === ""
-                    ? null
-                    : Number(req.body.class_id)
-        };
+        // Factory Pattern: Prepare updated subject object
+        const subjectData = SubjectFactory.updateSubject(req.body);
 
         await subjectModel.updateSubject(id, subjectData);
+
         const updatedSubject = await subjectModel.getSubjectById(id);
 
         return res.status(200).json({
@@ -205,6 +163,7 @@ const updateSubject = async (req, res) => {
             message: "Subject updated successfully.",
             data: updatedSubject
         });
+
     } catch (error) {
         return handleDatabaseError(res, error, "Update Subject");
     }
@@ -237,6 +196,7 @@ const deleteSubject = async (req, res) => {
             success: true,
             message: "Subject deleted successfully."
         });
+
     } catch (error) {
         return handleDatabaseError(res, error, "Delete Subject");
     }
@@ -249,3 +209,4 @@ module.exports = {
     updateSubject,
     deleteSubject
 };
+

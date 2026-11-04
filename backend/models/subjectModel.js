@@ -1,4 +1,5 @@
 
+
 const db = require("../config/db");
 
 // Get all subjects
@@ -29,13 +30,10 @@ const createSubject = async (subject) => {
     const { subject_name, subject_code, class_id } = subject;
 
     const [result] = await db.query(
-        `INSERT INTO subjects (subject_name, subject_code, class_id)
+        `INSERT INTO subjects
+         (subject_name, subject_code, class_id)
          VALUES (?, ?, ?)`,
-        [
-            subject_name,
-            subject_code || null,
-            class_id ?? null
-        ]
+        [subject_name, subject_code, class_id]
     );
 
     return result.insertId;
@@ -49,12 +47,7 @@ const updateSubject = async (id, subject) => {
         `UPDATE subjects
          SET subject_name = ?, subject_code = ?, class_id = ?
          WHERE subject_id = ?`,
-        [
-            subject_name,
-            subject_code || null,
-            class_id ?? null,
-            id
-        ]
+        [subject_name, subject_code, class_id, id]
     );
 
     return result.affectedRows;
