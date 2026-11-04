@@ -12,6 +12,7 @@ const studentRoutes = require("./routes/studentRoutes");
 const classRoutes = require("./routes/classRoutes");
 const sectionRoutes = require("./routes/sectionRoutes");
 const teacherRoutes = require("./routes/teacherRoutes");
+const subjectRoutes = require("./routes/subjectRoutes");
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use("/api/students", studentRoutes);
 app.use("/api/classes", classRoutes);
 app.use("/api/sections", sectionRoutes);
 app.use("/api/teachers", teacherRoutes);
+app.use("/api/subjects", subjectRoutes);
 
 const PORT = process.env.PORT || 5000;
 
