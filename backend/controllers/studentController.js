@@ -93,6 +93,13 @@ const updateStudent = async (req, res) => {
     try {
        const { id } = req.params;
 const student = req.body;
+if (student.admission_date === "") {
+    student.admission_date = null;
+}
+
+if (student.date_of_birth === "") {
+    student.date_of_birth = null;
+}
 
 if (!student.student_code?.trim()) {
     return res.status(400).json({
