@@ -48,11 +48,23 @@ const getStudentById = async (req, res) => {
 };
 
 // Create student
+// Create student
 const createStudent = async (req, res) => {
     try {
-        const student = req.body;
+        console.log("NEW STUDENT CONTROLLER IS RUNNING");
+        const student = req.body || {};
 
-        if (!student.full_name) {
+        console.log("CREATE STUDENT FUNCTION CALLED");
+        console.log("Student data:", student);
+
+        if (!student.student_code?.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Student code is required"
+            });
+        }
+
+        if (!student.full_name?.trim()) {
             return res.status(400).json({
                 success: false,
                 message: "Student name is required"
@@ -66,8 +78,9 @@ const createStudent = async (req, res) => {
             message: "Student created successfully",
             student_id: studentId
         });
+
     } catch (error) {
-        console.error("Create Student Error:", error.message);
+        console.error("Create Student Error:", error);
 
         res.status(500).json({
             success: false,
@@ -78,10 +91,24 @@ const createStudent = async (req, res) => {
 
 const updateStudent = async (req, res) => {
     try {
-        const { id } = req.params;
-        const student = req.body;
+       const { id } = req.params;
+const student = req.body;
 
-        const affectedRows = await studentModel.updateStudent(id, student);
+if (!student.student_code?.trim()) {
+    return res.status(400).json({
+        success: false,
+        message: "Student code is required"
+    });
+}
+
+if (!student.full_name?.trim()) {
+    return res.status(400).json({
+        success: false,
+        message: "Student name is required"
+    });
+}
+
+const affectedRows = await studentModel.updateStudent(id, student);
 
         if (affectedRows === 0) {
             return res.status(404).json({

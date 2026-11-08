@@ -48,6 +48,15 @@ app.get("/api/test-db", async (req, res) => {
 });
 
 // Student routes
+app.post("/api/test-validation", (req, res) => {
+    console.log("TEST VALIDATION ROUTE HIT");
+    console.log("Received body:", req.body);
+
+    res.status(400).json({
+        success: false,
+        message: "Express test route working"
+    });
+});
 app.use("/api/students", studentRoutes);
 app.use("/api/classes", classRoutes);
 app.use("/api/sections", sectionRoutes);
@@ -56,6 +65,18 @@ app.use("/api/subjects", subjectRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
+
+server.on("close", () => {
+    console.log("SERVER HAS CLOSED");
+});
+
+server.on("error", (error) => {
+    console.error("SERVER ERROR:", error);
+});
+
+setInterval(() => {
+    console.log("Server is still alive...");
+}, 5000);
