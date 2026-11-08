@@ -1,0 +1,259 @@
+
+.teacher-page {
+  padding: 28px;
+  width: 100%;
+}
+
+.teacher-page-header,
+.teacher-list-heading,
+.teacher-form-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.teacher-page-header {
+  margin-bottom: 24px;
+}
+
+.teacher-page-header h1,
+.teacher-list-heading h2,
+.teacher-form-heading h2 {
+  margin: 0;
+  color: #1e293b;
+}
+
+.teacher-page-header p,
+.teacher-list-heading p {
+  margin: 6px 0 0;
+  color: #64748b;
+}
+
+.teacher-add-btn,
+.teacher-save-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 18px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.teacher-add-btn:hover,
+.teacher-save-btn:hover {
+  background: #1d4ed8;
+}
+
+.teacher-form-card,
+.teacher-list-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+.teacher-form-heading {
+  margin-bottom: 22px;
+}
+
+.teacher-form-heading button {
+  border: none;
+  background: #f1f5f9;
+  border-radius: 6px;
+  padding: 7px 11px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.teacher-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.teacher-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.teacher-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.teacher-field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.teacher-field input,
+.teacher-field select,
+.teacher-field textarea,
+.teacher-search {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  padding: 11px 12px;
+  font-size: 14px;
+  outline: none;
+  background: white;
+  color: #1e293b;
+  box-sizing: border-box;
+}
+
+.teacher-field input:focus,
+.teacher-field select:focus,
+.teacher-field textarea:focus,
+.teacher-search:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.teacher-field textarea {
+  resize: vertical;
+}
+
+.teacher-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.teacher-cancel-btn,
+.teacher-save-btn {
+  border: none;
+  border-radius: 7px;
+  padding: 11px 18px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.teacher-cancel-btn {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.teacher-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.teacher-list-heading {
+  margin-bottom: 20px;
+}
+
+.teacher-search {
+  max-width: 280px;
+}
+
+.teacher-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.teacher-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 950px;
+}
+
+.teacher-table th,
+.teacher-table td {
+  padding: 13px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.teacher-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+}
+
+.teacher-table td {
+  color: #334155;
+}
+
+.teacher-action-buttons {
+  display: flex;
+  gap: 7px;
+}
+
+.teacher-edit-btn,
+.teacher-delete-btn {
+  border: none;
+  padding: 7px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.teacher-edit-btn {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.teacher-delete-btn {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.teacher-empty {
+  padding: 35px;
+  text-align: center;
+  color: #64748b;
+}
+
+.teacher-alert {
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+  font-size: 14px;
+}
+
+.teacher-alert.error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.teacher-alert.success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+@media (max-width: 700px) {
+  .teacher-page {
+    padding: 15px;
+  }
+
+  .teacher-page-header,
+  .teacher-list-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .teacher-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-field.full-width {
+    grid-column: auto;
+  }
+
+  .teacher-search {
+    max-width: none;
+  }
+
+  .teacher-form-card,
+  .teacher-list-card {
+    padding: 16px;
+  }
+}
