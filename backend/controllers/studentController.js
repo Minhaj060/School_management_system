@@ -9,7 +9,6 @@ const getAllStudents = async (req, res) => {
             success: true,
             data: students
         });
-
     } catch (error) {
         console.error("Get Students Error:", error.message);
 
@@ -19,7 +18,6 @@ const getAllStudents = async (req, res) => {
         });
     }
 };
-
 
 // Get student by ID
 const getStudentById = async (req, res) => {
@@ -39,7 +37,6 @@ const getStudentById = async (req, res) => {
             success: true,
             data: student
         });
-
     } catch (error) {
         console.error("Get Student Error:", error.message);
 
@@ -50,13 +47,23 @@ const getStudentById = async (req, res) => {
     }
 };
 
-
+// Create student
 // Create student
 const createStudent = async (req, res) => {
     try {
+        console.log("NEW STUDENT CONTROLLER IS RUNNING");
         const student = req.body || {};
 
-        // Validate student name
+        console.log("CREATE STUDENT FUNCTION CALLED");
+        console.log("Student data:", student);
+
+        if (!student.student_code?.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Student code is required"
+            });
+        }
+
         if (!student.full_name?.trim()) {
             return res.status(400).json({
                 success: false,
@@ -73,7 +80,7 @@ const createStudent = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Create Student Error:", error.message);
+        console.error("Create Student Error:", error);
 
         res.status(500).json({
             success: false,
@@ -82,31 +89,33 @@ const createStudent = async (req, res) => {
     }
 };
 
-
-// Update student
 const updateStudent = async (req, res) => {
     try {
-        const { id } = req.params;
-        const student = req.body || {};
+       const { id } = req.params;
+const student = req.body;
+if (student.admission_date === "") {
+    student.admission_date = null;
+}
 
-        // Convert empty dates to null
-        if (student.admission_date === "") {
-            student.admission_date = null;
-        }
+if (student.date_of_birth === "") {
+    student.date_of_birth = null;
+}
 
-        if (student.date_of_birth === "") {
-            student.date_of_birth = null;
-        }
+if (!student.student_code?.trim()) {
+    return res.status(400).json({
+        success: false,
+        message: "Student code is required"
+    });
+}
 
-        // Validate student name
-        if (!student.full_name?.trim()) {
-            return res.status(400).json({
-                success: false,
-                message: "Student name is required"
-            });
-        }
+if (!student.full_name?.trim()) {
+    return res.status(400).json({
+        success: false,
+        message: "Student name is required"
+    });
+}
 
-        const affectedRows = await studentModel.updateStudent(id, student);
+const affectedRows = await studentModel.updateStudent(id, student);
 
         if (affectedRows === 0) {
             return res.status(404).json({
@@ -119,7 +128,6 @@ const updateStudent = async (req, res) => {
             success: true,
             message: "Student updated successfully"
         });
-
     } catch (error) {
         console.error("Update Student Error:", error.message);
 
@@ -129,9 +137,6 @@ const updateStudent = async (req, res) => {
         });
     }
 };
-
-
-// Delete student
 const deleteStudent = async (req, res) => {
     try {
         const { id } = req.params;
@@ -149,7 +154,6 @@ const deleteStudent = async (req, res) => {
             success: true,
             message: "Student deleted successfully"
         });
-
     } catch (error) {
         console.error("Delete Student Error:", error.message);
 
@@ -159,9 +163,6 @@ const deleteStudent = async (req, res) => {
         });
     }
 };
-
-
-// Export functions
 module.exports = {
     getAllStudents,
     getStudentById,
