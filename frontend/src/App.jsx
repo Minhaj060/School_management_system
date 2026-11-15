@@ -8,6 +8,8 @@ import Sections from './pages/Sections'
 import Teachers from './pages/Teachers'
 import Subjects from './pages/Subjects'
 import API from './api/axios'
+import Login from './pages/Login'
+import Users from './pages/Users'
 
 const menuGroups = [
   {
@@ -30,16 +32,55 @@ const menuGroups = [
     ]
   },
   {
-    title: 'MANAGEMENT',
-    items: [
-      { name: 'Fees & Accounts', icon: '৳' },
-      { name: 'Settings', icon: '⚙' }
-    ]
-  }
+  title: 'MANAGEMENT',
+  items: [
+    { name: 'User Management', icon: '♙' },
+    { name: 'Fees & Accounts', icon: '৳' },
+    { name: 'Settings', icon: '⚙' }
+  ]
+}
 ]
 
 function App() {
   const [activeMenu, setActiveMenu] = useState('Dashboard')
+
+  const [user, setUser] = useState(null)
+  const [authLoading, setAuthLoading] = useState(true)
+
+  // Verify existing login session
+  useEffect(() => {
+    const verifyLogin = async () => {
+      const token = sessionStorage.getItem('token')
+
+      if (!token) {
+        setAuthLoading(false)
+        return
+      }
+
+      try {
+        const response = await API.get('/auth/me')
+        setUser(response.data.user)
+      } catch (error) {
+        sessionStorage.removeItem('token')
+        setUser(null)
+      } finally {
+        setAuthLoading(false)
+      }
+    }
+
+    verifyLogin()
+  }, [])
+
+  const handleLogin = (loggedInUser) => {
+    setUser(loggedInUser)
+    setActiveMenu('Dashboard')
+  }
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('token')
+    setUser(null)
+    setActiveMenu('Dashboard')
+  }
 
   const [stats, setStats] = useState([
     { title: 'Total Students', value: 0, icon: '♟', color: 'blue' },
@@ -50,60 +91,84 @@ function App() {
 
   const [loadingStats, setLoadingStats] = useState(true)
 
-  useEffect(() => {
-    if (activeMenu !== 'Dashboard') return
+  
+useEffect(() => {
+  // Wait until authentication is checked
+  if (authLoading || !user || activeMenu !== 'Dashboard') {
+    return
+  }
 
-    const fetchDashboardStats = async () => {
-      setLoadingStats(true)
+  const fetchDashboardStats = async () => {
+    setLoadingStats(true)
 
-      try {
-        const [students, teachers, classes, subjects] =
-          await Promise.all([
-            API.get('/students'),
-            API.get('/teachers'),
-            API.get('/classes'),
-            API.get('/subjects')
-          ])
-
-        setStats([
-          {
-            title: 'Total Students',
-            value: students.data.data.length,
-            icon: '♟',
-            color: 'blue'
-          },
-          {
-            title: 'Total Teachers',
-            value: teachers.data.data.length,
-            icon: '♙',
-            color: 'green'
-          },
-          {
-            title: 'Total Classes',
-            value: classes.data.data.length,
-            icon: '▤',
-            color: 'orange'
-          },
-          {
-            title: 'Total Subjects',
-            value: subjects.data.data.length,
-            icon: '▧',
-            color: 'purple'
-          }
+    try {
+      const [students, teachers, classes, subjects] =
+        await Promise.all([
+          API.get('/students'),
+          API.get('/teachers'),
+          API.get('/classes'),
+          API.get('/subjects')
         ])
-      } catch (error) {
-        console.error('Dashboard statistics error:', error)
-      } finally {
-        setLoadingStats(false)
-      }
-    }
 
-    fetchDashboardStats()
-  }, [activeMenu])
+      setStats([
+        {
+          title: 'Total Students',
+          value: students.data.data.length,
+          icon: '♟',
+          color: 'blue'
+        },
+        {
+          title: 'Total Teachers',
+          value: teachers.data.data.length,
+          icon: '♙',
+          color: 'green'
+        },
+        {
+          title: 'Total Classes',
+          value: classes.data.data.length,
+          icon: '▤',
+          color: 'orange'
+        },
+        {
+          title: 'Total Subjects',
+          value: subjects.data.data.length,
+          icon: '▧',
+          color: 'purple'
+        }
+      ])
+    } catch (error) {
+      console.error('Dashboard statistics error:', error)
+    } finally {
+      setLoadingStats(false)
+    }
+  }
+
+  fetchDashboardStats()
+}, [activeMenu, authLoading, user])
+
 
   const openPage = (page) => {
     setActiveMenu(page)
   }
+  // Show loading while checking login session
+if (authLoading) {
+  return (
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      fontSize: '18px'
+    }}>
+      Checking authentication...
+    </div>
+  )
+}
+
+// Show Login page if user is not authenticated
+if (!user) {
+  return <Login onLogin={handleLogin} />
+}
 
   return (
     <div className="app-container">
@@ -155,14 +220,26 @@ function App() {
             </div>
           </div>
 
-          <div className="sidebar-footer">
-            <div className="admin-avatar">A</div>
-            <div className="admin-info">
-              <strong>Administrator</strong>
-              <p>System Admin</p>
-            </div>
-            <span className="footer-dots">•••</span>
-          </div>
+          
+<div className="sidebar-footer">
+  <div className="admin-avatar">
+    {user?.full_name?.charAt(0).toUpperCase()}
+  </div>
+
+  <div className="admin-info">
+    <strong>{user?.full_name}</strong>
+    <p>{user?.role?.toUpperCase()}</p>
+  </div>
+
+  <button
+    className="logout-button"
+    onClick={handleLogout}
+    title="Logout"
+  >
+    ↪
+  </button>
+</div>
+
         </div>
 
       </aside>
@@ -457,8 +534,10 @@ function App() {
         ) : activeMenu === 'Sections' ? (
           <Sections />
         ) : activeMenu === 'Subjects' ? (
-          <Subjects />
-        ) : (
+  <Subjects />
+) : activeMenu === 'User Management' ? (
+  <Users />
+) : (
 
           <div className="dashboard-content">
             <div className="dashboard-card page-placeholder">

@@ -1,3 +1,4 @@
+
 const express = require("express");
 
 const {
@@ -8,7 +9,15 @@ const {
     deleteClass
 } = require("../controllers/classController");
 
+const {
+    authenticateToken,
+    authorizeRoles
+} = require("../middleware/authMiddleware");
+
 const router = express.Router();
+
+// Protect all class routes
+router.use(authenticateToken, authorizeRoles("admin"));
 
 // Get all classes
 router.get("/", getAllClasses);

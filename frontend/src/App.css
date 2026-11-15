@@ -1103,3 +1103,21 @@ button {
     font-size: 8px;
   }
 }
+
+.logout-button {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 8px;
+  background: #fff1f2;
+  color: #dc2626;
+  font-size: 21px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.logout-button:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
