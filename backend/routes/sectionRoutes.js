@@ -11,6 +11,14 @@ const {
     deleteSection
 } = require("../controllers/sectionController");
 
+const {
+    authenticateToken,
+    authorizeRoles
+} = require("../middleware/authMiddleware");
+
+// Protect all section routes
+router.use(authenticateToken, authorizeRoles("admin"));
+
 // GET all sections
 router.get("/", getAllSections);
 

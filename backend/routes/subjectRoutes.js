@@ -1,5 +1,4 @@
 
-
 const express = require("express");
 const router = express.Router();
 
@@ -10,6 +9,14 @@ const {
     updateSubject,
     deleteSubject
 } = require("../controllers/subjectController");
+
+const {
+    authenticateToken,
+    authorizeRoles
+} = require("../middleware/authMiddleware");
+
+// Protect all subject routes
+router.use(authenticateToken, authorizeRoles("admin"));
 
 // GET all subjects
 router.get("/", getAllSubjects);

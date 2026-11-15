@@ -13,11 +13,15 @@ const classRoutes = require("./routes/classRoutes");
 const sectionRoutes = require("./routes/sectionRoutes");
 const teacherRoutes = require("./routes/teacherRoutes");
 const subjectRoutes = require("./routes/subjectRoutes");
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use("/api/auth", authRoutes);
+
 
 // Test backend
 app.get("/", (req, res) => {
@@ -62,6 +66,7 @@ app.use("/api/classes", classRoutes);
 app.use("/api/sections", sectionRoutes);
 app.use("/api/teachers", teacherRoutes);
 app.use("/api/subjects", subjectRoutes);
+app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 
