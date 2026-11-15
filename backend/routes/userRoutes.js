@@ -6,16 +6,47 @@ const userController = require("../controllers/userController");
 
 const {
     authenticateToken,
-    authorizeRoles
+    authorizePermission
 } = require("../middleware/authMiddleware");
 
-// Only Admin can access User Management
-router.use(authenticateToken, authorizeRoles("admin"));
+// Get all users
+router.get(
+    "/",
+    authenticateToken,
+    authorizePermission("users:read"),
+    userController.getAllUsers
+);
 
-router.get("/", userController.getAllUsers);
-router.get("/:id", userController.getUserById);
-router.post("/", userController.createUser);
-router.put("/:id", userController.updateUser);
-router.delete("/:id", userController.deleteUser);
+// Get user by ID
+router.get(
+    "/:id",
+    authenticateToken,
+    authorizePermission("users:read"),
+    userController.getUserById
+);
+
+// Create user
+router.post(
+    "/",
+    authenticateToken,
+    authorizePermission("users:create"),
+    userController.createUser
+);
+
+// Update user
+router.put(
+    "/:id",
+    authenticateToken,
+    authorizePermission("users:update"),
+    userController.updateUser
+);
+
+// Delete user
+router.delete(
+    "/:id",
+    authenticateToken,
+    authorizePermission("users:delete"),
+    userController.deleteUser
+);
 
 module.exports = router;

@@ -1,8 +1,15 @@
+
 const express = require("express");
 const router = express.Router();
 
-const { login } = require("../controllers/authController");
-const { authenticateToken } = require("../middleware/authMiddleware");
+const {
+    login,
+    changePassword
+} = require("../controllers/authController");
+
+const {
+    authenticateToken
+} = require("../middleware/authMiddleware");
 
 // Login
 router.post("/login", login);
@@ -14,5 +21,8 @@ router.get("/me", authenticateToken, (req, res) => {
         user: req.user
     });
 });
+
+// Change Password
+router.put("/change-password", authenticateToken, changePassword);
 
 module.exports = router;

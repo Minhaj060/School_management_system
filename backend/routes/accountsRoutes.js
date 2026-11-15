@@ -1,87 +1,183 @@
+
 const express = require("express");
 const router = express.Router();
 
 const {
-    // Fee structure
     getAllFees,
     getFeeById,
     createFee,
     updateFee,
     deleteFee,
 
-    // Student fees
     assignFee,
     getStudentFees,
 
-    // Dues
     getAllDues,
 
-    // Payments
     createPayment,
     getPaymentHistory,
 
-    // Income
     getAllIncome,
     createIncome,
     updateIncome,
     deleteIncome,
 
-    // Expenses
     getAllExpenses,
     createExpense,
     updateExpense,
     deleteExpense,
 
-    // Payslips
     createPayslip,
     getAllPayslips,
     getPayslipById,
     markPayslipPaid
-
 } = require("../controllers/accountsController");
 
+const {
+    authenticateToken,
+    authorizePermission
+} = require("../middleware/authMiddleware");
+
+// All Accounts APIs require authentication
+router.use(authenticateToken);
 
 // FEE STRUCTURE
-router.get("/fee-structures", getAllFees);
-router.get("/fee-structures/:id", getFeeById);
-router.post("/fee-structures", createFee);
-router.put("/fee-structures/:id", updateFee);
-router.delete("/fee-structures/:id", deleteFee);
+router.get(
+    "/fee-structures",
+    authorizePermission("fees:read"),
+    getAllFees
+);
 
+router.get(
+    "/fee-structures/:id",
+    authorizePermission("fees:read"),
+    getFeeById
+);
+
+router.post(
+    "/fee-structures",
+    authorizePermission("fees:create"),
+    createFee
+);
+
+router.put(
+    "/fee-structures/:id",
+    authorizePermission("fees:update"),
+    updateFee
+);
+
+router.delete(
+    "/fee-structures/:id",
+    authorizePermission("fees:delete"),
+    deleteFee
+);
 
 // STUDENT FEES
-router.post("/student-fees", assignFee);
-router.get("/student-fees/:studentId", getStudentFees);
+router.post(
+    "/student-fees",
+    authorizePermission("student-fees:create"),
+    assignFee
+);
 
+router.get(
+    "/student-fees/:studentId",
+    authorizePermission("student-fees:read"),
+    getStudentFees
+);
 
 // DUES
-router.get("/dues", getAllDues);
-
+router.get(
+    "/dues",
+    authorizePermission("dues:read"),
+    getAllDues
+);
 
 // PAYMENTS
-router.post("/payments", createPayment);
-router.get("/payments", getPaymentHistory);
+router.post(
+    "/payments",
+    authorizePermission("payments:create"),
+    createPayment
+);
 
+router.get(
+    "/payments",
+    authorizePermission("payments:read"),
+    getPaymentHistory
+);
 
 // INCOME
-router.get("/income", getAllIncome);
-router.post("/income", createIncome);
-router.put("/income/:id", updateIncome);
-router.delete("/income/:id", deleteIncome);
+router.get(
+    "/income",
+    authorizePermission("income:read"),
+    getAllIncome
+);
 
+router.post(
+    "/income",
+    authorizePermission("income:create"),
+    createIncome
+);
+
+router.put(
+    "/income/:id",
+    authorizePermission("income:update"),
+    updateIncome
+);
+
+router.delete(
+    "/income/:id",
+    authorizePermission("income:delete"),
+    deleteIncome
+);
 
 // EXPENSES
-router.get("/expenses", getAllExpenses);
-router.post("/expenses", createExpense);
-router.put("/expenses/:id", updateExpense);
-router.delete("/expenses/:id", deleteExpense);
+router.get(
+    "/expenses",
+    authorizePermission("expenses:read"),
+    getAllExpenses
+);
 
+router.post(
+    "/expenses",
+    authorizePermission("expenses:create"),
+    createExpense
+);
+
+router.put(
+    "/expenses/:id",
+    authorizePermission("expenses:update"),
+    updateExpense
+);
+
+router.delete(
+    "/expenses/:id",
+    authorizePermission("expenses:delete"),
+    deleteExpense
+);
 
 // PAYSLIPS
-router.get("/payslips", getAllPayslips);
-router.get("/payslips/:id", getPayslipById);
-router.post("/payslips", createPayslip);
-router.put("/payslips/:id/pay", markPayslipPaid);
+router.get(
+    "/payslips",
+    authorizePermission("payslips:read"),
+    getAllPayslips
+);
 
+router.get(
+    "/payslips/:id",
+    authorizePermission("payslips:read"),
+    getPayslipById
+);
+
+router.post(
+    "/payslips",
+    authorizePermission("payslips:create"),
+    createPayslip
+);
+
+router.put(
+    "/payslips/:id/pay",
+    authorizePermission("payslips:pay"),
+    markPayslipPaid
+);
 
 module.exports = router;

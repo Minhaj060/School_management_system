@@ -1,8 +1,10 @@
-const jwt = require("jsonwebtoken");
 
+const jwt = require("jsonwebtoken");
+const permissions = require("../config/permissions");
+
+// 1. Verify JWT Token
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
-
     const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
@@ -14,9 +16,7 @@ const authenticateToken = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
         req.user = decoded;
-
         next();
     } catch (error) {
         return res.status(403).json({
@@ -26,6 +26,7 @@ const authenticateToken = (req, res, next) => {
     }
 };
 
+// 2. Check User Role
 const authorizeRoles = (...allowedRoles) => {
     return (req, res, next) => {
         if (!req.user || !allowedRoles.includes(req.user.role)) {
@@ -39,7 +40,34 @@ const authorizeRoles = (...allowedRoles) => {
     };
 };
 
+// 3. Check User Permission
+const authorizePermission = (requiredPermission) => {
+    return (req, res, next) => {
+        if (!req.user || !req.user.role) {
+            return res.status(401).json({
+                success: false,
+                message: "Authentication required."
+            });
+        }
+
+        const userPermissions = permissions[req.user.role] || [];
+
+        if (
+            !userPermissions.includes("*") &&
+            !userPermissions.includes(requiredPermission)
+        ) {
+            return res.status(403).json({
+                success: false,
+                message: "You do not have permission to perform this action."
+            });
+        }
+
+        next();
+    };
+};
+
 module.exports = {
     authenticateToken,
-    authorizeRoles
+    authorizeRoles,
+    authorizePermission
 };

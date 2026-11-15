@@ -13,25 +13,47 @@ const {
 
 const {
     authenticateToken,
-    authorizeRoles
+    authorizePermission
 } = require("../middleware/authMiddleware");
 
-// Protect all section routes
-router.use(authenticateToken, authorizeRoles("admin"));
-
 // GET all sections
-router.get("/", getAllSections);
+router.get(
+    "/",
+    authenticateToken,
+    authorizePermission("sections:read"),
+    getAllSections
+);
 
 // GET section by ID
-router.get("/:id", getSectionById);
+router.get(
+    "/:id",
+    authenticateToken,
+    authorizePermission("sections:read"),
+    getSectionById
+);
 
 // CREATE section
-router.post("/", createSection);
+router.post(
+    "/",
+    authenticateToken,
+    authorizePermission("sections:create"),
+    createSection
+);
 
 // UPDATE section
-router.put("/:id", updateSection);
+router.put(
+    "/:id",
+    authenticateToken,
+    authorizePermission("sections:update"),
+    updateSection
+);
 
 // DELETE section
-router.delete("/:id", deleteSection);
+router.delete(
+    "/:id",
+    authenticateToken,
+    authorizePermission("sections:delete"),
+    deleteSection
+);
 
 module.exports = router;

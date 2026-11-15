@@ -6,25 +6,47 @@ const teacherController = require("../controllers/teacherController");
 
 const {
     authenticateToken,
-    authorizeRoles
+    authorizePermission
 } = require("../middleware/authMiddleware");
 
-// Protect all teacher routes
-router.use(authenticateToken, authorizeRoles("admin"));
-
 // Get all teachers
-router.get("/", teacherController.getAllTeachers);
+router.get(
+    "/",
+    authenticateToken,
+    authorizePermission("teachers:read"),
+    teacherController.getAllTeachers
+);
 
 // Get teacher by ID
-router.get("/:id", teacherController.getTeacherById);
+router.get(
+    "/:id",
+    authenticateToken,
+    authorizePermission("teachers:read"),
+    teacherController.getTeacherById
+);
 
 // Create teacher
-router.post("/", teacherController.createTeacher);
+router.post(
+    "/",
+    authenticateToken,
+    authorizePermission("teachers:create"),
+    teacherController.createTeacher
+);
 
 // Update teacher
-router.put("/:id", teacherController.updateTeacher);
+router.put(
+    "/:id",
+    authenticateToken,
+    authorizePermission("teachers:update"),
+    teacherController.updateTeacher
+);
 
 // Delete teacher
-router.delete("/:id", teacherController.deleteTeacher);
+router.delete(
+    "/:id",
+    authenticateToken,
+    authorizePermission("teachers:delete"),
+    teacherController.deleteTeacher
+);
 
 module.exports = router;

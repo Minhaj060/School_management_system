@@ -11,27 +11,49 @@ const {
 
 const {
     authenticateToken,
-    authorizeRoles
+    authorizePermission
 } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// Protect all class routes
-router.use(authenticateToken, authorizeRoles("admin"));
-
 // Get all classes
-router.get("/", getAllClasses);
+router.get(
+    "/",
+    authenticateToken,
+    authorizePermission("classes:read"),
+    getAllClasses
+);
 
 // Get class by ID
-router.get("/:id", getClassById);
+router.get(
+    "/:id",
+    authenticateToken,
+    authorizePermission("classes:read"),
+    getClassById
+);
 
 // Create class
-router.post("/", createClass);
+router.post(
+    "/",
+    authenticateToken,
+    authorizePermission("classes:create"),
+    createClass
+);
 
 // Update class
-router.put("/:id", updateClass);
+router.put(
+    "/:id",
+    authenticateToken,
+    authorizePermission("classes:update"),
+    updateClass
+);
 
 // Delete class
-router.delete("/:id", deleteClass);
+router.delete(
+    "/:id",
+    authenticateToken,
+    authorizePermission("classes:delete"),
+    deleteClass
+);
 
 module.exports = router;
