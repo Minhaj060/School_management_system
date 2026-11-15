@@ -12,25 +12,47 @@ const {
 
 const {
     authenticateToken,
-    authorizeRoles
+    authorizePermission
 } = require("../middleware/authMiddleware");
 
-// Protect all subject routes
-router.use(authenticateToken, authorizeRoles("admin"));
-
 // GET all subjects
-router.get("/", getAllSubjects);
+router.get(
+    "/",
+    authenticateToken,
+    authorizePermission("subjects:read"),
+    getAllSubjects
+);
 
 // GET subject by ID
-router.get("/:id", getSubjectById);
+router.get(
+    "/:id",
+    authenticateToken,
+    authorizePermission("subjects:read"),
+    getSubjectById
+);
 
 // CREATE subject
-router.post("/", createSubject);
+router.post(
+    "/",
+    authenticateToken,
+    authorizePermission("subjects:create"),
+    createSubject
+);
 
 // UPDATE subject
-router.put("/:id", updateSubject);
+router.put(
+    "/:id",
+    authenticateToken,
+    authorizePermission("subjects:update"),
+    updateSubject
+);
 
 // DELETE subject
-router.delete("/:id", deleteSubject);
+router.delete(
+    "/:id",
+    authenticateToken,
+    authorizePermission("subjects:delete"),
+    deleteSubject
+);
 
 module.exports = router;

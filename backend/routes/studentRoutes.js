@@ -11,27 +11,49 @@ const {
 
 const {
     authenticateToken,
-    authorizeRoles
+    authorizePermission
 } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// Protect all student routes
-router.use(authenticateToken, authorizeRoles("admin"));
-
 // Get all students
-router.get("/", getAllStudents);
+router.get(
+    "/",
+    authenticateToken,
+    authorizePermission("students:read"),
+    getAllStudents
+);
 
 // Get student by ID
-router.get("/:id", getStudentById);
+router.get(
+    "/:id",
+    authenticateToken,
+    authorizePermission("students:read"),
+    getStudentById
+);
 
 // Create student
-router.post("/", createStudent);
+router.post(
+    "/",
+    authenticateToken,
+    authorizePermission("students:create"),
+    createStudent
+);
 
 // Update student
-router.put("/:id", updateStudent);
+router.put(
+    "/:id",
+    authenticateToken,
+    authorizePermission("students:update"),
+    updateStudent
+);
 
 // Delete student
-router.delete("/:id", deleteStudent);
+router.delete(
+    "/:id",
+    authenticateToken,
+    authorizePermission("students:delete"),
+    deleteStudent
+);
 
 module.exports = router;
