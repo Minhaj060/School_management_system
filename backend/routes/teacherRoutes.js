@@ -1,7 +1,16 @@
+
 const express = require("express");
 const router = express.Router();
 
 const teacherController = require("../controllers/teacherController");
+
+const {
+    authenticateToken,
+    authorizeRoles
+} = require("../middleware/authMiddleware");
+
+// Protect all teacher routes
+router.use(authenticateToken, authorizeRoles("admin"));
 
 // Get all teachers
 router.get("/", teacherController.getAllTeachers);
