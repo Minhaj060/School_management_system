@@ -129,6 +129,29 @@ class AccountsModel {
 
         return rows;
     }
+    // Get all student fee records
+async getAllStudentFees() {
+    const [rows] = await db.query(`
+        SELECT
+            sf.student_fee_id,
+            sf.student_id,
+            s.full_name,
+            sf.fee_id,
+            fs.fee_name,
+            fs.frequency,
+            sf.due_amount,
+            sf.paid_amount,
+            (sf.due_amount - sf.paid_amount) AS outstanding,
+            sf.due_date,
+            sf.status
+        FROM student_fees sf
+        JOIN students s ON sf.student_id = s.student_id
+        JOIN fee_structure fs ON sf.fee_id = fs.fee_id
+        ORDER BY sf.student_fee_id DESC
+    `);
+
+    return rows;
+}
 
 
     // ================= DUE CALCULATION =================
@@ -451,6 +474,18 @@ class AccountsModel {
 
         return result.affectedRows;
     }
+    // Get student ID using the logged-in user's ID
+async getStudentIdByUserId(userId) {
+    const [rows] = await db.query(
+        `SELECT student_id
+         FROM students
+         WHERE user_id = ?
+         LIMIT 1`,
+        [userId]
+    );
+
+    return rows[0]?.student_id || null;
+}
 }
 
 module.exports = new AccountsModel();
