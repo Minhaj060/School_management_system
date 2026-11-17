@@ -6,6 +6,7 @@ import Students from './pages/Students'
 import Classes from './pages/Classes'
 import Sections from './pages/Sections'
 import Teachers from './pages/Teachers'
+import Staff from './pages/staffs'
 import Subjects from './pages/Subjects'
 import API from './api/axios'
 import Login from './pages/Login'
@@ -22,6 +23,7 @@ const roleMenuGroups = {
         { name: 'Dashboard', icon: '▦' },
         { name: 'Students', icon: '♟' },
         { name: 'Teachers', icon: '♙' },
+        { name: 'Staff Management', icon: '♟' },
         { name: 'Classes', icon: '▤' },
         { name: 'Sections', icon: '▣' },
         { name: 'Subjects', icon: '▧' }
@@ -749,6 +751,10 @@ function App() {
         ) : activeMenu === 'Teachers' ? (
 
           <Teachers />
+
+        ) : activeMenu === 'Staff Management' ? (
+
+          <Staff />
 
         ) : activeMenu === 'Classes' ? (
 
