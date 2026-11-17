@@ -11,7 +11,12 @@ import API from './api/axios'
 import Login from './pages/Login'
 import Users from './pages/Users'
 import ChangePassword from './pages/ChangePassword'
-
+import Examinations from './pages/Examinations'
+import ExamSchedule from './pages/ExamSchedule'
+import MarksEntry from './pages/MarksEntry'
+import GradeGPA from './pages/GradeGPA'
+import ResultPublication from './pages/ResultPublication'
+import StudentResult from './pages/StudentResult'
 // ================= MENU CONFIGURATION =================
 
 const roleMenuGroups = {
@@ -32,7 +37,12 @@ const roleMenuGroups = {
       items: [
         { name: 'Attendance', icon: '✓' },
         { name: 'Examinations', icon: '▤' },
-        { name: 'Results', icon: '▥' }
+        { name: 'Exam Schedule', icon: '📅' },
+        { name: 'Marks Entry', icon: '✍' },
+        { name: 'Grade & GPA', icon: '📊' },
+        { name: 'Results', icon: '▥' },
+        { name: 'Result Publication', icon: '📢' },
+        { name: 'Student Result', icon: '🎓' },
       ]
     },
     {
@@ -761,7 +771,24 @@ function App() {
         ) : activeMenu === 'Subjects' ? (
 
           <Subjects />
+        ) : activeMenu === 'Examinations' ? (
 
+          <Examinations />
+        ) : activeMenu === 'Exam Schedule' ? (
+
+          <ExamSchedule />
+        ) : activeMenu === 'Marks Entry' ? (
+
+          <MarksEntry />
+        ) : activeMenu === 'Grade & GPA' ? (
+
+          <GradeGPA />
+        ) : activeMenu === 'Result Publication' ? (
+
+          <ResultPublication />
+        ) : activeMenu === 'Student Result' ? (
+
+          <StudentResult />
         ) : activeMenu === 'User Management' ? (
 
           <Users />

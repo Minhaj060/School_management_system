@@ -3,12 +3,27 @@ const permissions = {
     admin: ["*"],
 
     teacher: [
-        "students:read",
-        "teachers:read",
-        "classes:read",
-        "sections:read",
-        "subjects:read"
-    ],
+    "students:read",
+    "teachers:read",
+    "classes:read",
+    "sections:read",
+    "subjects:read",
+
+    // Exam permissions
+    "exams:read",
+    "exams:create",
+    "exams:update",
+    "exams:delete",
+
+    
+
+    // Result permissions
+    "results:read",
+    "results:create",
+    "results:update",
+    "results:delete"
+],
+    
 
    
 accountant: [
