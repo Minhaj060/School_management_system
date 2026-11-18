@@ -7,7 +7,10 @@ const permissions = {
         "teachers:read",
         "classes:read",
         "sections:read",
-        "subjects:read"
+        "subjects:read",
+        "attendance:read",
+"attendance:create",
+"attendance:update"
     ],
 
    

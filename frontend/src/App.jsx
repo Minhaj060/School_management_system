@@ -13,6 +13,8 @@ import Login from './pages/Login'
 import Users from './pages/Users'
 import ChangePassword from './pages/ChangePassword'
 import Accounts from './pages/Accounts'
+import StudentAttendance from './pages/StudentAttendance'
+import TeacherAssignment from './pages/TeacherAssignment'
 
 // ================= MENU CONFIGURATION =================
 
@@ -24,6 +26,7 @@ const roleMenuGroups = {
         { name: 'Dashboard', icon: '▦' },
         { name: 'Students', icon: '♟' },
         { name: 'Teachers', icon: '♙' },
+        { name: 'Teacher Assignment', icon: '📚' },
         { name: 'Classes', icon: '▤' },
         { name: 'Sections', icon: '▣' },
         { name: 'Subjects', icon: '▧' }
@@ -766,6 +769,9 @@ function App() {
         ) : activeMenu === 'Teachers' ? (
 
           <Teachers />
+          ) : activeMenu === 'Teacher Assignment' ? (
+
+    <TeacherAssignment />
 
         ) : activeMenu === 'Classes' ? (
 
@@ -778,6 +784,9 @@ function App() {
         ) : activeMenu === 'Subjects' ? (
 
           <Subjects />
+          ) : activeMenu === 'Attendance' ? (
+
+  <StudentAttendance userRole={userRole} />
 
         ) : activeMenu === 'Fees & Accounts' ? (
 
