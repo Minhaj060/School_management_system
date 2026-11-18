@@ -233,7 +233,20 @@ exports.getStudentFees = async (req, res) => {
         sendError(res, error);
     }
 };
+// Get all assigned student fees
+exports.getAllStudentFees = async (req, res) => {
+    try {
+        const data = await AccountsModel.getAllStudentFees();
 
+        res.json({
+            success: true,
+            count: data.length,
+            data
+        });
+    } catch (error) {
+        sendError(res, error);
+    }
+};
 
 // ================= DUES =================
 
@@ -642,6 +655,87 @@ exports.markPayslipPaid = async (req, res) => {
         res.json({
             success: true,
             message: "Payslip marked as paid."
+        });
+    } catch (error) {
+        sendError(res, error);
+    }
+};
+// ================= STUDENT SELF-SERVICE =================
+
+// Get logged-in student's own fees
+exports.getMyStudentFees = async (req, res) => {
+    try {
+        const studentId = await AccountsModel.getStudentIdByUserId(
+            req.user.user_id
+        );
+
+        if (!studentId) {
+            return res.status(404).json({
+                success: false,
+                message: "Student record not found for this account."
+            });
+        }
+
+        const data = await AccountsModel.getStudentFees(studentId);
+
+        res.json({
+            success: true,
+            count: data.length,
+            data
+        });
+    } catch (error) {
+        sendError(res, error);
+    }
+};
+
+
+// Get logged-in student's own dues
+exports.getMyDues = async (req, res) => {
+    try {
+        const studentId = await AccountsModel.getStudentIdByUserId(
+            req.user.user_id
+        );
+
+        if (!studentId) {
+            return res.status(404).json({
+                success: false,
+                message: "Student record not found for this account."
+            });
+        }
+
+        const data = await AccountsModel.getAllDues(studentId);
+
+        res.json({
+            success: true,
+            count: data.length,
+            data
+        });
+    } catch (error) {
+        sendError(res, error);
+    }
+};
+
+
+// Get logged-in student's own payment history
+exports.getMyPaymentHistory = async (req, res) => {
+    try {
+        const studentId = await AccountsModel.getStudentIdByUserId(
+            req.user.user_id
+        );
+
+        if (!studentId) {
+            return res.status(404).json({
+                success: false,
+                message: "Student record not found for this account."
+            });
+        }
+
+        const data = await AccountsModel.getPaymentHistory(studentId);
+
+        res.json({
+            success: true,
+            count: data.length,
+            data
         });
     } catch (error) {
         sendError(res, error);
