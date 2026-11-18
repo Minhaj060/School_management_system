@@ -1,4 +1,5 @@
 
+
 import { useState, useEffect } from 'react'
 import './App.css'
 
@@ -19,6 +20,10 @@ import ResultPublication from './pages/ResultPublication'
 import StudentResult from './pages/StudentResult'
 import StudentAttendance from './pages/StudentAttendance'
 import Accounts from './pages/Accounts'
+import Accounts from './pages/Accounts'
+import StudentAttendance from './pages/StudentAttendance'
+import TeacherAssignment from './pages/TeacherAssignment'
+
 // ================= MENU CONFIGURATION =================
 
 const roleMenuGroups = {
@@ -29,6 +34,7 @@ const roleMenuGroups = {
         { name: 'Dashboard', icon: '▦' },
         { name: 'Students', icon: '♟' },
         { name: 'Teachers', icon: '♙' },
+        { name: 'Teacher Assignment', icon: '📚' },
         { name: 'Classes', icon: '▤' },
         { name: 'Sections', icon: '▣' },
         { name: 'Subjects', icon: '▧' }
@@ -125,7 +131,8 @@ const roleMenuGroups = {
       items: [
         { name: 'Dashboard', icon: '▦' },
         { name: 'Attendance', icon: '✓' },
-        { name: 'Results', icon: '▥' }
+        { name: 'Results', icon: '▥' },
+        { name: 'Fees & Accounts', icon: '৳' }
       ]
     },
     {
@@ -606,6 +613,20 @@ function App() {
                     </button>
                   )}
 
+                  {userRole === 'student' && (
+                    <button
+                      className="quick-action"
+                      onClick={() => openPage('Fees & Accounts')}
+                    >
+                      <span className="quick-action-icon orange">৳</span>
+                      <span>
+                        <strong>Fees & Accounts</strong>
+                        <small>View your fees and payments</small>
+                      </span>
+                      <b>→</b>
+                    </button>
+                  )}
+
                   {(userRole === 'parent' || userRole === 'student') && (
                     <>
                       <button
@@ -761,6 +782,9 @@ function App() {
         ) : activeMenu === 'Teachers' ? (
 
           <Teachers />
+          ) : activeMenu === 'Teacher Assignment' ? (
+
+    <TeacherAssignment />
 
         ) : activeMenu === 'Classes' ? (
 
@@ -796,6 +820,13 @@ function App() {
           <StudentAttendance userRole={userRole} />
 
         ) : activeMenu === 'Fees & Accounts' ? (
+          ) : activeMenu === 'Attendance' ? (
+
+  <StudentAttendance userRole={userRole} />
+
+        ) : activeMenu === 'Fees & Accounts' ? (
+
+          <Accounts user={user} />
 
           <Accounts user={user} />
         ) : activeMenu === 'User Management' ? (

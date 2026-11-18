@@ -79,6 +79,8 @@ app.use("/api/teacher-assignments", teacherAssignmentRoutes);
 app.use("/api/accounts", accountsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/attendance", attendanceRoutes);
+app.use("/api/teacher-assignments", teacherAssignmentRoutes);
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => {

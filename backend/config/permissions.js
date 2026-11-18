@@ -25,6 +25,9 @@ const permissions = {
         "results:create",
         "results:update",
         "results:delete"
+        "attendance:read",
+"attendance:create",
+"attendance:update"
     ],
 
    
@@ -76,7 +79,11 @@ accountant: [
         "profile:read",
         "attendance:read",
         "results:read",
-        "fees:read"
+        "fees:read" ,
+        "student:fees:read",
+        "student:dues:read",
+        "student:payments:read"
+        
     ]
 };
 
