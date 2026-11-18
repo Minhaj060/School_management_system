@@ -20,8 +20,6 @@ import ResultPublication from './pages/ResultPublication'
 import StudentResult from './pages/StudentResult'
 import StudentAttendance from './pages/StudentAttendance'
 import Accounts from './pages/Accounts'
-import Accounts from './pages/Accounts'
-import StudentAttendance from './pages/StudentAttendance'
 import TeacherAssignment from './pages/TeacherAssignment'
 
 // ================= MENU CONFIGURATION =================
@@ -814,21 +812,16 @@ function App() {
           <ResultPublication />
         ) : activeMenu === 'Student Result' ? (
 
-          <StudentResult />
+        <StudentResult />
+
         ) : activeMenu === 'Attendance' ? (
 
           <StudentAttendance userRole={userRole} />
 
         ) : activeMenu === 'Fees & Accounts' ? (
-          ) : activeMenu === 'Attendance' ? (
-
-  <StudentAttendance userRole={userRole} />
-
-        ) : activeMenu === 'Fees & Accounts' ? (
 
           <Accounts user={user} />
-
-          <Accounts user={user} />
+        
         ) : activeMenu === 'User Management' ? (
 
           <Users />

@@ -25,9 +25,7 @@ const permissions = {
         "results:create",
         "results:update",
         "results:delete"
-        "attendance:read",
-"attendance:create",
-"attendance:update"
+        
     ],
 
    
