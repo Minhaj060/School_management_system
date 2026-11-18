@@ -19,6 +19,8 @@ const userRoutes = require("./routes/userRoutes");
 const examRoutes = require("./routes/examRoutes");
 const examScheduleRoutes = require("./routes/examScheduleRoutes");
 const resultRoutes = require("./routes/resultRoutes");
+const attendanceRoutes = require("./routes/attendanceRoutes");
+const teacherAssignmentRoutes = require("./routes/teacherAssignmentRoutes");
 const app = express();
 
 app.use(cors());
@@ -72,6 +74,8 @@ app.use("/api/subjects", subjectRoutes);
 app.use("/api/exams", examRoutes);
 app.use("/api/exam-schedules", examScheduleRoutes);
 app.use("/api/results", resultRoutes);
+app.use("/api/attendance", attendanceRoutes);
+app.use("/api/teacher-assignments", teacherAssignmentRoutes);
 app.use("/api/accounts", accountsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);

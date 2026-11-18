@@ -17,6 +17,8 @@ import MarksEntry from './pages/MarksEntry'
 import GradeGPA from './pages/GradeGPA'
 import ResultPublication from './pages/ResultPublication'
 import StudentResult from './pages/StudentResult'
+import StudentAttendance from './pages/StudentAttendance'
+import Accounts from './pages/Accounts'
 // ================= MENU CONFIGURATION =================
 
 const roleMenuGroups = {
@@ -789,6 +791,13 @@ function App() {
         ) : activeMenu === 'Student Result' ? (
 
           <StudentResult />
+        ) : activeMenu === 'Attendance' ? (
+
+          <StudentAttendance userRole={userRole} />
+
+        ) : activeMenu === 'Fees & Accounts' ? (
+
+          <Accounts user={user} />
         ) : activeMenu === 'User Management' ? (
 
           <Users />
