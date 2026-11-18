@@ -8,6 +8,8 @@ const initialForm = {
   email: '',
   password: '',
   role: 'teacher',
+  teacher_id: '',
+  student_id: '',
   phone: '',
   status: 'active'
 }
@@ -16,17 +18,22 @@ const roles = ['teacher', 'student', 'parent', 'accountant']
 
 function Users() {
   const [users, setUsers] = useState([])
+  const [teachers, setTeachers] = useState([])
+  const [students, setStudents] = useState([])
+
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
+
   const [showModal, setShowModal] = useState(false)
   const [editingUser, setEditingUser] = useState(null)
   const [form, setForm] = useState(initialForm)
 
-  // Fetch all users
+  // Fetch users
   const fetchUsers = async () => {
     try {
       setLoading(true)
@@ -35,21 +42,55 @@ function Users() {
       const response = await API.get('/users')
       setUsers(response.data.data || [])
     } catch (err) {
-      setError(
-        err.response?.data?.message || 'Failed to load users.'
-      )
+      setError(err.response?.data?.message || 'Failed to load users.')
     } finally {
       setLoading(false)
     }
   }
 
+  // Fetch teacher profiles
+  const fetchTeachers = async () => {
+    try {
+      const response = await API.get('/teachers')
+      const data = response.data.data || []
+
+      setTeachers(
+        data.filter(
+          teacher =>
+            teacher.status === 'active' || teacher.status == null
+        )
+      )
+    } catch (err) {
+      console.error('Failed to load teachers:', err)
+    }
+  }
+
+  // Fetch student profiles
+  const fetchStudents = async () => {
+    try {
+      const response = await API.get('/students')
+      const data = response.data.data || []
+
+      setStudents(
+        data.filter(
+          student =>
+            student.status === 'active' || student.status == null
+        )
+      )
+    } catch (err) {
+      console.error('Failed to load students:', err)
+    }
+  }
+
   useEffect(() => {
     fetchUsers()
+    fetchTeachers()
+    fetchStudents()
   }, [])
 
   // Search and filters
   const filteredUsers = useMemo(() => {
-    return users.filter((user) => {
+    return users.filter(user => {
       const searchText = search.toLowerCase()
 
       const matchesSearch =
@@ -68,11 +109,11 @@ function Users() {
   }, [users, search, roleFilter, statusFilter])
 
   const activeCount = users.filter(
-    (user) => user.status === 'active'
+    user => user.status === 'active'
   ).length
 
   const inactiveCount = users.filter(
-    (user) => user.status === 'inactive'
+    user => user.status === 'inactive'
   ).length
 
   // Open Add User modal
@@ -84,16 +125,24 @@ function Users() {
   }
 
   // Open Edit User modal
-  const openEditModal = (user) => {
+  const openEditModal = user => {
     setEditingUser(user)
+
     setForm({
       full_name: user.full_name || '',
       email: user.email || '',
       password: '',
       role: user.role || 'teacher',
+      teacher_id: user.teacher_id
+        ? String(user.teacher_id)
+        : '',
+      student_id: user.student_id
+        ? String(user.student_id)
+        : '',
       phone: user.phone || '',
       status: user.status || 'active'
     })
+
     setError('')
     setShowModal(true)
   }
@@ -105,16 +154,27 @@ function Users() {
     setError('')
   }
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target
-    setForm((previous) => ({
-      ...previous,
-      [name]: value
-    }))
+
+    setForm(previous => {
+      const updated = {
+        ...previous,
+        [name]: value
+      }
+
+      // Clear old profile selection when role changes
+      if (name === 'role') {
+        updated.teacher_id = ''
+        updated.student_id = ''
+      }
+
+      return updated
+    })
   }
 
   // Create or update user
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault()
     setError('')
 
@@ -123,29 +183,55 @@ function Users() {
       return
     }
 
+    if (form.role === 'teacher' && !form.teacher_id) {
+      setError('Please select a Teacher Profile.')
+      return
+    }
+
+    if (form.role === 'student' && !form.student_id) {
+      setError('Please select a Student Profile.')
+      return
+    }
+
     try {
       setSaving(true)
 
+      const userData = {
+        full_name: form.full_name.trim(),
+        email: form.email.trim().toLowerCase(),
+        role: form.role,
+
+        teacher_id:
+          form.role === 'teacher'
+            ? Number(form.teacher_id)
+            : null,
+
+        student_id:
+          form.role === 'student'
+            ? Number(form.student_id)
+            : null,
+
+        phone: form.phone.trim()
+      }
+
       if (editingUser) {
         await API.put(`/users/${editingUser.user_id}`, {
-          full_name: form.full_name.trim(),
-          email: form.email.trim().toLowerCase(),
-          role: form.role,
-          phone: form.phone.trim(),
+          ...userData,
           status: form.status
         })
       } else {
         await API.post('/users', {
-          full_name: form.full_name.trim(),
-          email: form.email.trim().toLowerCase(),
-          password: form.password,
-          role: form.role,
-          phone: form.phone.trim()
+          ...userData,
+          password: form.password
         })
       }
 
       closeModal()
+
       await fetchUsers()
+      await fetchTeachers()
+      await fetchStudents()
+
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -157,7 +243,7 @@ function Users() {
   }
 
   // Delete user
-  const handleDelete = async (user) => {
+  const handleDelete = async user => {
     const confirmed = window.confirm(
       `Are you sure you want to delete ${user.full_name}?`
     )
@@ -166,18 +252,19 @@ function Users() {
 
     try {
       await API.delete(`/users/${user.user_id}`)
+
       await fetchUsers()
+      await fetchTeachers()
+      await fetchStudents()
+
     } catch (err) {
-      alert(
-        err.response?.data?.message || 'Failed to delete user.'
-      )
+      alert(err.response?.data?.message || 'Failed to delete user.')
     }
   }
 
   return (
     <div className="users-page">
 
-      {/* Page heading */}
       <div className="users-heading">
         <div>
           <h1>User Management</h1>
@@ -218,7 +305,7 @@ function Users() {
 
       </div>
 
-      {/* User table */}
+      {/* Users Table */}
       <div className="users-table-card">
 
         <div className="users-table-heading">
@@ -228,32 +315,33 @@ function Users() {
           </div>
         </div>
 
-        {/* Filters */}
         <div className="users-filters">
 
           <input
             type="search"
             placeholder="Search name, email or phone..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={e => setSearch(e.target.value)}
           />
 
           <select
             value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value)}
+            onChange={e => setRoleFilter(e.target.value)}
           >
             <option value="all">All Roles</option>
-            {roles.map((role) => (
+
+            {roles.map(role => (
               <option key={role} value={role}>
                 {role.charAt(0).toUpperCase() + role.slice(1)}
               </option>
             ))}
+
             <option value="admin">Admin</option>
           </select>
 
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={e => setStatusFilter(e.target.value)}
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -262,7 +350,11 @@ function Users() {
 
           <button
             className="users-refresh-btn"
-            onClick={fetchUsers}
+            onClick={() => {
+              fetchUsers()
+              fetchTeachers()
+              fetchStudents()
+            }}
             title="Refresh users"
           >
             ↻ Refresh
@@ -283,7 +375,6 @@ function Users() {
             <p>Try changing your search or filters.</p>
           </div>
         ) : (
-
           <div className="users-table-wrapper">
             <table className="users-table">
               <thead>
@@ -299,14 +390,14 @@ function Users() {
               </thead>
 
               <tbody>
-                {filteredUsers.map((user) => (
+                {filteredUsers.map(user => (
                   <tr key={user.user_id}>
-
                     <td>
                       <div className="users-name-cell">
                         <div className="users-avatar">
                           {user.full_name?.charAt(0).toUpperCase()}
                         </div>
+
                         <div>
                           <strong>{user.full_name}</strong>
                           <small>ID: {user.user_id}</small>
@@ -354,7 +445,6 @@ function Users() {
                         </button>
                       </div>
                     </td>
-
                   </tr>
                 ))}
               </tbody>
@@ -374,6 +464,7 @@ function Users() {
                 <h2>
                   {editingUser ? 'Edit User' : 'Create New User'}
                 </h2>
+
                 <p>
                   {editingUser
                     ? 'Update account information.'
@@ -391,7 +482,6 @@ function Users() {
             </div>
 
             <form onSubmit={handleSubmit}>
-
               <div className="users-form-grid">
 
                 <div className="users-form-group">
@@ -441,13 +531,91 @@ function Users() {
                     onChange={handleChange}
                     required
                   >
-                    {roles.map((role) => (
+                    {roles.map(role => (
                       <option key={role} value={role}>
                         {role.charAt(0).toUpperCase() + role.slice(1)}
                       </option>
                     ))}
                   </select>
                 </div>
+
+                {/* Teacher Profile */}
+                {form.role === 'teacher' && (
+                  <div className="users-form-group">
+                    <label>Teacher Profile *</label>
+
+                    <select
+                      name="teacher_id"
+                      value={form.teacher_id}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Select Teacher Profile</option>
+
+                      {teachers.map(teacher => {
+                        const linkedToAnotherUser =
+                          teacher.user_id &&
+                          Number(teacher.user_id) !==
+                            Number(editingUser?.user_id)
+
+                        return (
+                          <option
+                            key={teacher.teacher_id}
+                            value={teacher.teacher_id}
+                            disabled={Boolean(linkedToAnotherUser)}
+                          >
+                            {teacher.full_name} ({teacher.employee_code})
+                            {linkedToAnotherUser ? ' - Already Linked' : ''}
+                          </option>
+                        )
+                      })}
+                    </select>
+
+                    {teachers.length === 0 && (
+                      <small>No active Teacher Profile found.</small>
+                    )}
+                  </div>
+                )}
+
+                {/* Student Profile */}
+                {form.role === 'student' && (
+                  <div className="users-form-group">
+                    <label>Student Profile *</label>
+
+                    <select
+                      name="student_id"
+                      value={form.student_id}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Select Student Profile</option>
+
+                      {students.map(student => {
+                        const linkedToAnotherUser =
+                          student.user_id &&
+                          Number(student.user_id) !==
+                            Number(editingUser?.user_id)
+
+                        return (
+                          <option
+                            key={student.student_id}
+                            value={student.student_id}
+                            disabled={Boolean(linkedToAnotherUser)}
+                          >
+                            {student.full_name} ({student.student_code})
+                            {linkedToAnotherUser ? ' - Already Linked' : ''}
+                          </option>
+                        )
+                      })}
+                    </select>
+
+                    {students.length === 0 && (
+                      <small>
+                        No active Student Profile found. Create a student profile first.
+                      </small>
+                    )}
+                  </div>
+                )}
 
                 <div className="users-form-group">
                   <label>Phone Number</label>
@@ -493,7 +661,11 @@ function Users() {
                 <button
                   type="submit"
                   className="users-save-btn"
-                  disabled={saving}
+                  disabled={
+                    saving ||
+                    (form.role === 'teacher' && !form.teacher_id) ||
+                    (form.role === 'student' && !form.student_id)
+                  }
                 >
                   {saving
                     ? 'Saving...'
@@ -504,7 +676,6 @@ function Users() {
               </div>
 
             </form>
-
           </div>
         </div>
       )}
