@@ -10,6 +10,51 @@ const allowedRoles = [
     "student"
 ];
 
+// Handle model errors
+const handleModelError = (res, error, action) => {
+    console.error(`${action} Error:`, error);
+
+    if (error.code === "ER_DUP_ENTRY") {
+        return res.status(409).json({
+            success: false,
+            message: "Email or profile is already linked."
+        });
+    }
+
+    if (error.message === "TEACHER_NOT_FOUND") {
+        return res.status(404).json({
+            success: false,
+            message: "Selected teacher profile not found."
+        });
+    }
+
+    if (error.message === "TEACHER_ALREADY_LINKED") {
+        return res.status(409).json({
+            success: false,
+            message: "This teacher profile is already linked to another account."
+        });
+    }
+
+    if (error.message === "STUDENT_NOT_FOUND") {
+        return res.status(404).json({
+            success: false,
+            message: "Selected student profile not found."
+        });
+    }
+
+    if (error.message === "STUDENT_ALREADY_LINKED") {
+        return res.status(409).json({
+            success: false,
+            message: "This student profile is already linked to another account."
+        });
+    }
+
+    return res.status(500).json({
+        success: false,
+        message: `Failed to ${action.toLowerCase()}.`
+    });
+};
+
 // Get all users
 const getAllUsers = async (req, res) => {
     try {
@@ -20,11 +65,7 @@ const getAllUsers = async (req, res) => {
             data: users
         });
     } catch (error) {
-        console.error("Get Users Error:", error);
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch users."
-        });
+        handleModelError(res, error, "Fetch Users");
     }
 };
 
@@ -45,18 +86,22 @@ const getUserById = async (req, res) => {
             data: user
         });
     } catch (error) {
-        console.error("Get User Error:", error);
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch user."
-        });
+        handleModelError(res, error, "Fetch User");
     }
 };
 
 // Create user
 const createUser = async (req, res) => {
     try {
-        const { full_name, email, password, role, phone } = req.body;
+        const {
+            full_name,
+            email,
+            password,
+            role,
+            phone,
+            teacher_id,
+            student_id
+        } = req.body;
 
         if (!full_name || !email || !password || !role) {
             return res.status(400).json({
@@ -79,6 +124,26 @@ const createUser = async (req, res) => {
             });
         }
 
+        if (
+            role === "teacher" &&
+            (!Number.isInteger(Number(teacher_id)) || Number(teacher_id) <= 0)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Please select a teacher profile."
+            });
+        }
+
+        if (
+            role === "student" &&
+            (!Number.isInteger(Number(student_id)) || Number(student_id) <= 0)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Please select a student profile."
+            });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 12);
 
         const userId = await userModel.createUser({
@@ -86,35 +151,38 @@ const createUser = async (req, res) => {
             email: email.trim().toLowerCase(),
             password: hashedPassword,
             role,
-            phone
+            phone,
+            teacher_id: role === "teacher" ? Number(teacher_id) : null,
+            student_id: role === "student" ? Number(student_id) : null
         });
 
         res.status(201).json({
             success: true,
-            message: "User created successfully.",
+            message: role === "teacher"
+                ? "Teacher account created and profile linked successfully."
+                : role === "student"
+                    ? "Student account created and profile linked successfully."
+                    : "User created successfully.",
             user_id: userId
         });
+
     } catch (error) {
-        console.error("Create User Error:", error);
-
-        if (error.code === "ER_DUP_ENTRY") {
-            return res.status(409).json({
-                success: false,
-                message: "Email already exists."
-            });
-        }
-
-        res.status(500).json({
-            success: false,
-            message: "Failed to create user."
-        });
+        handleModelError(res, error, "Create User");
     }
 };
 
 // Update user
 const updateUser = async (req, res) => {
     try {
-        const { full_name, email, role, phone, status } = req.body;
+        const {
+            full_name,
+            email,
+            role,
+            phone,
+            status,
+            teacher_id,
+            student_id
+        } = req.body;
 
         if (!full_name || !email || !role || !status) {
             return res.status(400).json({
@@ -137,6 +205,26 @@ const updateUser = async (req, res) => {
             });
         }
 
+        if (
+            role === "teacher" &&
+            (!Number.isInteger(Number(teacher_id)) || Number(teacher_id) <= 0)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Please select a teacher profile."
+            });
+        }
+
+        if (
+            role === "student" &&
+            (!Number.isInteger(Number(student_id)) || Number(student_id) <= 0)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Please select a student profile."
+            });
+        }
+
         const affectedRows = await userModel.updateUser(
             req.params.id,
             {
@@ -144,14 +232,16 @@ const updateUser = async (req, res) => {
                 email: email.trim().toLowerCase(),
                 role,
                 phone,
-                status
+                status,
+                teacher_id: role === "teacher" ? Number(teacher_id) : null,
+                student_id: role === "student" ? Number(student_id) : null
             }
         );
 
         if (!affectedRows) {
             return res.status(404).json({
                 success: false,
-                message: "User not found or no changes made."
+                message: "User not found."
             });
         }
 
@@ -159,20 +249,9 @@ const updateUser = async (req, res) => {
             success: true,
             message: "User updated successfully."
         });
+
     } catch (error) {
-        console.error("Update User Error:", error);
-
-        if (error.code === "ER_DUP_ENTRY") {
-            return res.status(409).json({
-                success: false,
-                message: "Email already exists."
-            });
-        }
-
-        res.status(500).json({
-            success: false,
-            message: "Failed to update user."
-        });
+        handleModelError(res, error, "Update User");
     }
 };
 
@@ -208,12 +287,9 @@ const deleteUser = async (req, res) => {
             success: true,
             message: "User deleted successfully."
         });
+
     } catch (error) {
-        console.error("Delete User Error:", error);
-        res.status(500).json({
-            success: false,
-            message: "Failed to delete user."
-        });
+        handleModelError(res, error, "Delete User");
     }
 };
 
