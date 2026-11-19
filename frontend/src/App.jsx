@@ -21,6 +21,7 @@ import StudentResult from './pages/StudentResult'
 import StudentAttendance from './pages/StudentAttendance'
 import Accounts from './pages/Accounts'
 import TeacherAssignment from './pages/TeacherAssignment'
+import Results from './pages/Results'
 
 // ================= MENU CONFIGURATION =================
 
@@ -807,6 +808,9 @@ function App() {
         ) : activeMenu === 'Grade & GPA' ? (
 
           <GradeGPA />
+        ) : activeMenu === 'Results' ? (
+
+         <Results />
         ) : activeMenu === 'Result Publication' ? (
 
           <ResultPublication />

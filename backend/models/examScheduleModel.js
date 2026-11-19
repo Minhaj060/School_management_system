@@ -3,8 +3,25 @@ const db = require("../config/db");
 // Get all exam schedules
 const getAllExamSchedules = async () => {
     const [rows] = await db.query(
-        `SELECT * FROM exam_schedule ORDER BY exam_date ASC`
+        `SELECT
+            es.schedule_id,
+            es.exam_id,
+            e.exam_name,
+            e.class_id,
+            c.class_name,
+            es.subject_id,
+            s.subject_name,
+            es.exam_date,
+            es.start_time,
+            es.end_time,
+            es.room
+        FROM exam_schedule es
+        JOIN exams e ON es.exam_id = e.exam_id
+        JOIN classes c ON e.class_id = c.class_id
+        JOIN subjects s ON es.subject_id = s.subject_id
+        ORDER BY es.exam_date ASC`
     );
+
     return rows;
 };
 
