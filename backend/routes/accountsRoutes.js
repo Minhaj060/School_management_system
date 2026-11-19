@@ -1,4 +1,5 @@
 
+
 const express = require("express");
 const router = express.Router();
 
@@ -11,6 +12,7 @@ const {
 
     assignFee,
     getStudentFees,
+    getAllStudentFees,
 
     getAllDues,
 
@@ -30,7 +32,12 @@ const {
     createPayslip,
     getAllPayslips,
     getPayslipById,
-    markPayslipPaid
+    markPayslipPaid,
+
+    // Student self-service
+    getMyStudentFees,
+    getMyDues,
+    getMyPaymentHistory
 } = require("../controllers/accountsController");
 
 const {
@@ -38,10 +45,36 @@ const {
     authorizePermission
 } = require("../middleware/authMiddleware");
 
-// All Accounts APIs require authentication
+// All account routes require authentication
 router.use(authenticateToken);
 
-// FEE STRUCTURE
+
+// ================= STUDENT SELF-SERVICE =================
+
+// Logged-in student can view only their own fees
+router.get(
+    "/student/my-fees",
+    authorizePermission("student:fees:read"),
+    getMyStudentFees
+);
+
+// Logged-in student can view only their own dues
+router.get(
+    "/student/my-dues",
+    authorizePermission("student:dues:read"),
+    getMyDues
+);
+
+// Logged-in student can view only their own payment history
+router.get(
+    "/student/my-payments",
+    authorizePermission("student:payments:read"),
+    getMyPaymentHistory
+);
+
+
+// ================= FEE STRUCTURE =================
+
 router.get(
     "/fee-structures",
     authorizePermission("fees:read"),
@@ -72,40 +105,59 @@ router.delete(
     deleteFee
 );
 
-// STUDENT FEES
+
+// ================= STUDENT FEES =================
+
+// Assign a fee to a student
 router.post(
     "/student-fees",
     authorizePermission("student-fees:create"),
     assignFee
 );
 
+// Get all assigned student fees (admin/accountant)
+router.get(
+    "/student-fees",
+    authorizePermission("student-fees:read"),
+    getAllStudentFees
+);
+
+// Get fees for a specific student
 router.get(
     "/student-fees/:studentId",
     authorizePermission("student-fees:read"),
     getStudentFees
 );
 
-// DUES
+
+// ================= DUES =================
+
 router.get(
     "/dues",
     authorizePermission("dues:read"),
     getAllDues
 );
 
-// PAYMENTS
+
+// ================= PAYMENTS =================
+
+// Record a payment
 router.post(
     "/payments",
     authorizePermission("payments:create"),
     createPayment
 );
 
+// View payment history
 router.get(
     "/payments",
     authorizePermission("payments:read"),
     getPaymentHistory
 );
 
-// INCOME
+
+// ================= INCOME =================
+
 router.get(
     "/income",
     authorizePermission("income:read"),
@@ -130,7 +182,9 @@ router.delete(
     deleteIncome
 );
 
-// EXPENSES
+
+// ================= EXPENSES =================
+
 router.get(
     "/expenses",
     authorizePermission("expenses:read"),
@@ -155,7 +209,9 @@ router.delete(
     deleteExpense
 );
 
-// PAYSLIPS
+
+// ================= PAYSLIPS =================
+
 router.get(
     "/payslips",
     authorizePermission("payslips:read"),
@@ -179,5 +235,6 @@ router.put(
     authorizePermission("payslips:pay"),
     markPayslipPaid
 );
+
 
 module.exports = router;

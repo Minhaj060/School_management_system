@@ -1,0 +1,210 @@
+
+.teacher-assignment {
+    padding: 24px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.teacher-assignment-header {
+    margin-bottom: 24px;
+}
+
+.teacher-assignment-header h2 {
+    font-size: 24px;
+    margin: 0 0 8px;
+    color: var(--text-primary, #1e293b);
+}
+
+.teacher-assignment-header p {
+    color: var(--text-secondary, #64748b);
+    margin: 0;
+}
+
+.ta-card {
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.ta-card h3 {
+    margin: 0 0 20px;
+    font-size: 19px;
+    color: var(--text-primary, #1e293b);
+}
+
+.ta-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.ta-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ta-form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary, #334155);
+}
+
+.ta-form-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color, #cbd5e1);
+    border-radius: 8px;
+    background: var(--input-bg, #ffffff);
+    color: var(--text-primary, #334155);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ta-form-group select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.ta-form-group select:disabled {
+    background: #f1f5f9;
+    cursor: not-allowed;
+    color: #94a3b8;
+}
+
+.ta-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+
+.ta-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 11px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.ta-btn-primary {
+    background: #2563eb;
+    color: white;
+}
+
+.ta-btn-primary:hover {
+    background: #1d4ed8;
+}
+
+.ta-btn-secondary {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.ta-btn-secondary:hover {
+    background: #cbd5e1;
+}
+
+.ta-btn-edit {
+    background: #dbeafe;
+    color: #1d4ed8;
+    padding: 7px 12px;
+}
+
+.ta-btn-edit:hover {
+    background: #bfdbfe;
+}
+
+.ta-btn-delete {
+    background: #fee2e2;
+    color: #dc2626;
+    padding: 7px 12px;
+}
+
+.ta-btn-delete:hover {
+    background: #fecaca;
+}
+
+.ta-message {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.ta-success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.ta-error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.ta-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.ta-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+.ta-table th,
+.ta-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+    font-size: 14px;
+}
+
+.ta-table th {
+    background: var(--table-header-bg, #f8fafc);
+    color: var(--text-secondary, #475569);
+    font-weight: 600;
+}
+
+.ta-table td {
+    color: var(--text-primary, #334155);
+}
+
+.ta-table tbody tr:hover {
+    background: var(--table-hover-bg, #f8fafc);
+}
+
+.ta-empty {
+    text-align: center !important;
+    padding: 28px !important;
+    color: #94a3b8 !important;
+}
+
+@media (max-width: 768px) {
+    .teacher-assignment {
+        padding: 14px;
+    }
+
+    .ta-card {
+        padding: 18px;
+    }
+
+    .ta-form-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .ta-actions {
+        flex-direction: column;
+    }
+
+    .ta-btn {
+        width: 100%;
+    }
+}
