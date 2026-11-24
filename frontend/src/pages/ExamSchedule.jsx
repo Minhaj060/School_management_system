@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react'
 import API from '../api/axios'
+import './ExamModules.css'
 
 function ExamSchedule() {
   const [exams, setExams] = useState([])

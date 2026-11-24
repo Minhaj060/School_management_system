@@ -1,6 +1,8 @@
 
 import React, { useEffect, useState } from 'react'
 import API from '../api/axios'
+import './Examinations.css'
+import './ExamModules.css'
 
 const Examinations = () => {
   const [exams, setExams] = useState([])
@@ -8,6 +10,7 @@ const Examinations = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   const [form, setForm] = useState({
     exam_name: '',
@@ -55,6 +58,7 @@ const Examinations = () => {
     e.preventDefault()
     setMessage('')
     setError('')
+    setSubmitting(true)
 
     try {
       const response = await API.post('/exams', {
@@ -73,12 +77,14 @@ const Examinations = () => {
         status: 'scheduled',
       })
 
-      loadData()
+      await loadData()
     } catch (err) {
       setError(
         err.response?.data?.message ||
         'Failed to create examination.'
       )
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -89,10 +95,13 @@ const Examinations = () => {
 
     if (!confirmed) return
 
+    setMessage('')
+    setError('')
+
     try {
       await API.delete(`/exams/${id}`)
       setMessage('Examination deleted successfully!')
-      loadData()
+      await loadData()
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -102,156 +111,171 @@ const Examinations = () => {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Examinations Management</h2>
-      <p>Create and manage school examinations.</p>
+    <div className="examinations-page">
+
+      <div className="exam-page-header">
+        <h2>Examinations Management</h2>
+        <p>Create, organize and manage school examinations.</p>
+      </div>
 
       {message && (
-        <p style={{ color: 'green' }}>{message}</p>
+        <div className="exam-alert success">
+          {message}
+        </div>
       )}
 
       {error && (
-        <p style={{ color: 'red' }}>{error}</p>
+        <div className="exam-alert error">
+          {error}
+        </div>
       )}
 
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          background: '#fff',
-          padding: '20px',
-          borderRadius: '8px',
-          marginBottom: '25px',
-        }}
-      >
+      <div className="exam-card">
         <h3>Create New Examination</h3>
 
-        <div style={{ marginBottom: '12px' }}>
-          <label>Exam Name</label>
-          <input
-            type="text"
-            name="exam_name"
-            value={form.exam_name}
-            onChange={handleChange}
-            placeholder="Enter exam name"
-            required
-            style={inputStyle}
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
 
-        <div style={{ marginBottom: '12px' }}>
-          <label>Class</label>
-          <select
-            name="class_id"
-            value={form.class_id}
-            onChange={handleChange}
-            required
-            style={inputStyle}
+          <div className="exam-form-grid">
+
+            <div className="exam-form-group">
+              <label>Exam Name *</label>
+              <input
+                type="text"
+                name="exam_name"
+                value={form.exam_name}
+                onChange={handleChange}
+                placeholder="Enter exam name"
+                required
+              />
+            </div>
+
+            <div className="exam-form-group">
+              <label>Class *</label>
+              <select
+                name="class_id"
+                value={form.class_id}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Class</option>
+
+                {classes.map((item) => (
+                  <option key={item.class_id} value={item.class_id}>
+                    {item.class_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="exam-form-group">
+              <label>Academic Year *</label>
+              <input
+                type="text"
+                name="academic_year"
+                value={form.academic_year}
+                onChange={handleChange}
+                placeholder="Example: 2026"
+                required
+              />
+            </div>
+
+            <div className="exam-form-group">
+              <label>Start Date</label>
+              <input
+                type="date"
+                name="start_date"
+                value={form.start_date}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="exam-form-group">
+              <label>End Date</label>
+              <input
+                type="date"
+                name="end_date"
+                value={form.end_date}
+                onChange={handleChange}
+                min={form.start_date || undefined}
+              />
+            </div>
+
+            <div className="exam-form-group">
+              <label>Status</label>
+              <select
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+              >
+                <option value="scheduled">Scheduled</option>
+                <option value="ongoing">Ongoing</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+
+          </div>
+
+          <button
+            type="submit"
+            className="exam-primary-btn"
+            disabled={submitting}
           >
-            <option value="">Select Class</option>
-            {classes.map((item) => (
-              <option key={item.class_id} value={item.class_id}>
-                {item.class_name}
-              </option>
-            ))}
-          </select>
-        </div>
+            {submitting ? 'Creating...' : '+ Create Examination'}
+          </button>
 
-        <div style={{ marginBottom: '12px' }}>
-          <label>Academic Year</label>
-          <input
-            type="text"
-            name="academic_year"
-            value={form.academic_year}
-            onChange={handleChange}
-            required
-            style={inputStyle}
-          />
-        </div>
+        </form>
+      </div>
 
-        <div style={{ marginBottom: '12px' }}>
-          <label>Start Date</label>
-          <input
-            type="date"
-            name="start_date"
-            value={form.start_date}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-        </div>
-
-        <div style={{ marginBottom: '12px' }}>
-          <label>End Date</label>
-          <input
-            type="date"
-            name="end_date"
-            value={form.end_date}
-            onChange={handleChange}
-            style={inputStyle}
-          />
-        </div>
-
-        <div style={{ marginBottom: '12px' }}>
-          <label>Status</label>
-          <select
-            name="status"
-            value={form.status}
-            onChange={handleChange}
-            style={inputStyle}
-          >
-            <option value="scheduled">Scheduled</option>
-            <option value="ongoing">Ongoing</option>
-            <option value="completed">Completed</option>
-          </select>
-        </div>
-
-        <button type="submit" style={buttonStyle}>
-          Create Examination
-        </button>
-      </form>
-
-      <h3>Examination List</h3>
+      <div className="exam-list-header">
+        <h3>Examination List</h3>
+      </div>
 
       {loading ? (
-        <p>Loading examinations...</p>
+        <div className="exam-loading">
+          Loading examinations...
+        </div>
       ) : exams.length === 0 ? (
-        <p>No examinations found.</p>
+        <div className="exam-empty">
+          No examinations found. Create your first examination above.
+        </div>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={tableStyle}>
+
+        <div className="exam-table-wrapper">
+          <table className="exam-table">
+
             <thead>
               <tr>
-                <th style={cellStyle}>ID</th>
-                <th style={cellStyle}>Exam Name</th>
-                <th style={cellStyle}>Class ID</th>
-                <th style={cellStyle}>Academic Year</th>
-                <th style={cellStyle}>Start Date</th>
-                <th style={cellStyle}>End Date</th>
-                <th style={cellStyle}>Status</th>
-                <th style={cellStyle}>Action</th>
+                <th>ID</th>
+                <th>Exam Name</th>
+                <th>Class ID</th>
+                <th>Academic Year</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
 
             <tbody>
               {exams.map((exam) => (
                 <tr key={exam.exam_id}>
-                  <td style={cellStyle}>{exam.exam_id}</td>
-                  <td style={cellStyle}>{exam.exam_name}</td>
-                  <td style={cellStyle}>{exam.class_id}</td>
-                  <td style={cellStyle}>{exam.academic_year}</td>
-                  <td style={cellStyle}>
-                    {exam.start_date?.slice(0, 10) || '-'}
+                  <td>{exam.exam_id}</td>
+                  <td>{exam.exam_name}</td>
+                  <td>{exam.class_id}</td>
+                  <td>{exam.academic_year}</td>
+                  <td>{exam.start_date?.slice(0, 10) || '-'}</td>
+                  <td>{exam.end_date?.slice(0, 10) || '-'}</td>
+
+                  <td>
+                    <span className={`exam-status ${exam.status}`}>
+                      {exam.status}
+                    </span>
                   </td>
-                  <td style={cellStyle}>
-                    {exam.end_date?.slice(0, 10) || '-'}
-                  </td>
-                  <td style={cellStyle}>{exam.status}</td>
-                  <td style={cellStyle}>
+
+                  <td>
                     <button
+                      className="exam-delete-btn"
                       onClick={() => handleDelete(exam.exam_id)}
-                      style={{
-                        ...buttonStyle,
-                        background: '#dc3545',
-                      }}
                     >
                       Delete
                     </button>
@@ -259,42 +283,13 @@ const Examinations = () => {
                 </tr>
               ))}
             </tbody>
+
           </table>
         </div>
       )}
+
     </div>
   )
-}
-
-const inputStyle = {
-  display: 'block',
-  width: '100%',
-  padding: '10px',
-  marginTop: '5px',
-  border: '1px solid #ccc',
-  borderRadius: '5px',
-  boxSizing: 'border-box',
-}
-
-const buttonStyle = {
-  padding: '10px 18px',
-  background: '#2563eb',
-  color: '#fff',
-  border: 'none',
-  borderRadius: '5px',
-  cursor: 'pointer',
-}
-
-const tableStyle = {
-  width: '100%',
-  borderCollapse: 'collapse',
-  background: '#fff',
-}
-
-const cellStyle = {
-  border: '1px solid #ddd',
-  padding: '10px',
-  textAlign: 'left',
 }
 
 export default Examinations

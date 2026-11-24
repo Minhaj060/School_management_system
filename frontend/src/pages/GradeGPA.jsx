@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react'
 import API from '../api/axios'
-
+import './ExamModules.css'
 function GradeGPA() {
   const [exams, setExams] = useState([])
   const [results, setResults] = useState([])

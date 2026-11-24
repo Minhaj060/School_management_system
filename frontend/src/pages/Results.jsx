@@ -1,6 +1,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import API from '../api/axios'
+import './ExamModules.css'
 
 function Results() {
   const [results, setResults] = useState([])
