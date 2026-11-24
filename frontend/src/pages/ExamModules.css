@@ -1,0 +1,205 @@
+
+/* Shared styling for Exam & Result modules */
+
+.dashboard-content,
+.exam-module-page {
+  padding: 24px;
+  min-height: 100vh;
+  color: #1e293b;
+  background: #f8fafc;
+}
+
+.dashboard-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.dashboard-section-heading h2,
+.exam-module-page h2 {
+  margin: 0 0 8px;
+  color: #172554;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.dashboard-section-heading p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.dashboard-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  margin-bottom: 22px;
+}
+
+.dashboard-card h3,
+.exam-module-page h3 {
+  margin: 0 0 20px;
+  color: #1e293b;
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.dashboard-content label,
+.exam-module-page label {
+  display: block;
+  margin-bottom: 7px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dashboard-content input,
+.dashboard-content select,
+.exam-module-page input,
+.exam-module-page select {
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background: #fff;
+  color: #1e293b;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.dashboard-content input:focus,
+.dashboard-content select:focus,
+.exam-module-page input:focus,
+.exam-module-page select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.dashboard-content button,
+.exam-module-page button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 7px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.dashboard-content button:hover,
+.exam-module-page button:hover {
+  background: #1d4ed8;
+}
+
+.dashboard-content button:disabled,
+.exam-module-page button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.dashboard-content table,
+.exam-module-page table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  min-width: 650px;
+}
+
+.dashboard-content th,
+.exam-module-page th {
+  padding: 14px 12px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.dashboard-content td,
+.exam-module-page td {
+  padding: 13px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.dashboard-content tbody tr:hover,
+.exam-module-page tbody tr:hover {
+  background: #f8fafc;
+}
+
+.dashboard-content td input {
+  min-width: 65px;
+  width: 100%;
+  padding: 8px;
+}
+
+.dashboard-content table button,
+.exam-module-page table button {
+  margin: 2px;
+  padding: 7px 11px;
+  font-size: 12px;
+}
+
+.dashboard-content button[style*="marginLeft"],
+.dashboard-content button[style*="margin-left"] {
+  background: #64748b;
+}
+
+.dashboard-content button[style*="marginLeft"]:hover,
+.dashboard-content button[style*="margin-left"]:hover {
+  background: #475569;
+}
+
+.exam-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.exam-module-page .exam-message,
+.dashboard-content .exam-message {
+  padding: 13px 16px;
+  margin-bottom: 18px;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 14px;
+}
+
+.exam-module-page .exam-empty,
+.dashboard-content .exam-empty {
+  padding: 30px;
+  color: #64748b;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .dashboard-content,
+  .exam-module-page {
+    padding: 14px;
+  }
+
+  .dashboard-section-heading h2,
+  .exam-module-page h2 {
+    font-size: 21px;
+  }
+
+  .dashboard-card {
+    padding: 16px !important;
+  }
+
+  .dashboard-content table,
+  .exam-module-page table {
+    min-width: 650px;
+  }
+}

@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react'
 import API from '../api/axios'
+import './ExamModules.css'
 
 function ResultPublication() {
   const [exams, setExams] = useState([])
@@ -55,7 +56,7 @@ function ResultPublication() {
   }
 
   return (
-    <div>
+  <div className="exam-module-page">
       <h2>Result Publication</h2>
 
       {message && <p>{message}</p>}
