@@ -12,6 +12,7 @@ const studentRoutes = require("./routes/studentRoutes");
 const classRoutes = require("./routes/classRoutes");
 const sectionRoutes = require("./routes/sectionRoutes");
 const teacherRoutes = require("./routes/teacherRoutes");
+const staffRoutes = require("./routes/staffRoutes");
 const subjectRoutes = require("./routes/subjectRoutes");
 const accountsRoutes = require("./routes/accountsRoutes");
 const authRoutes = require("./routes/authRoutes");
@@ -21,6 +22,7 @@ const examScheduleRoutes = require("./routes/examScheduleRoutes");
 const resultRoutes = require("./routes/resultRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const teacherAssignmentRoutes = require("./routes/teacherAssignmentRoutes");
+
 const app = express();
 
 app.use(cors());
@@ -66,10 +68,12 @@ app.post("/api/test-validation", (req, res) => {
         message: "Express test route working"
     });
 });
+
 app.use("/api/students", studentRoutes);
 app.use("/api/classes", classRoutes);
 app.use("/api/sections", sectionRoutes);
 app.use("/api/teachers", teacherRoutes);
+app.use("/api/staff", staffRoutes);
 app.use("/api/subjects", subjectRoutes);
 app.use("/api/exams", examRoutes);
 app.use("/api/exam-schedules", examScheduleRoutes);
@@ -81,6 +85,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/teacher-assignments", teacherAssignmentRoutes);
+
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => {
